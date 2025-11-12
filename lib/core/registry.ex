@@ -84,7 +84,7 @@ defmodule TelemetryMetricsPrometheus.Core.Registry do
     buckets
   end
 
-  def validate_distribution_buckets!({first..last, step} = buckets) when is_integer(step) do
+  def validate_distribution_buckets!({first..last//_, step} = buckets) when is_integer(step) do
     if first >= last do
       raise ArgumentError, "expected buckets range to be ascending, got #{inspect(buckets)}"
     end
@@ -191,14 +191,14 @@ defmodule TelemetryMetricsPrometheus.Core.Registry do
           [metric | acc]
 
         {:error, :already_exists, metric_name} ->
-          Logger.warn(
+          Logger.warning(
             "Metric name already exists. Dropping measure. metric_name:=#{inspect(metric_name)}"
           )
 
           acc
 
         {:error, :unsupported_metric_type, metric_type} ->
-          Logger.warn(
+          Logger.warning(
             "Metric type #{metric_type} is unsupported. Dropping measure. metric_name:=#{inspect(metric.name)}"
           )
 
